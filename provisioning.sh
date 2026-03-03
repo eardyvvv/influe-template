@@ -2,6 +2,9 @@
 set -e
 source /venv/main/bin/activate
 
+RED='\033[0;31m'
+NC='\033[0m'
+
 WORKSPACE=${WORKSPACE:-/workspace}
 COMFYUI_DIR="${WORKSPACE}/ComfyUI"
 
@@ -85,14 +88,14 @@ function provisioning_get_nodes() {
         path="./${dir}"
 
         if [[ -d "$path" ]]; then
-            (cd "$path" && git pull --ff-only 2>/dev/null || { git fetch && git reset --hard origin/main; })
+            (cd "$path" && git pull --ff-only 2>/dev/null || { git fetch && git reset --hard origin/main; }) || echo -e "${RED}ERROR: Failed to update node $dir${NC}"
         else
-            git clone "$repo" "$path" --recursive
+            git clone "$repo" "$path" --recursive || echo -e "${RED}ERROR: Failed to clone node $dir${NC}"
         fi
 
         requirements="${path}/requirements.txt"
         if [[ -f "$requirements" ]]; then
-            pip install --no-cache-dir -r "$requirements"
+            pip install --no-cache-dir -r "$requirements" || echo -e "${RED}ERROR: Failed to install requirements for $dir${NC}"
         fi
     done
 }
@@ -106,7 +109,7 @@ function provisioning_get_files() {
     mkdir -p "$dir"
 
     for url in "${files[@]}"; do
-        wget -nc --content-disposition --show-progress -e dotbytes=4M -P "$dir" "$url"
+        wget -nc --content-disposition --show-progress -e dotbytes=4M -P "$dir" "$url" || echo -e "${RED}ERROR: Failed to download $url${NC}"
     done
 }
 
