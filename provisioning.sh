@@ -106,10 +106,11 @@ function provisioning_get_nodes() {
             if (cd "$path" && git pull --ff-only 2>/dev/null || { git fetch && git reset --hard origin/main; }); then
                 NODE_OK=1
             else
-                echo -e "${RED}ERROR: Failed to update node $dir${NC}"
+                echo -e "${RED}CRITICAL ERROR: Failed to update node $dir. Exiting.${NC}"
+                exit 1
             fi
         else
-            local MAX_RETRIES=3
+            local MAX_RETRIES=10
             local ATTEMPT=0
             local SUCCESS=0
             while [[ $ATTEMPT -lt $MAX_RETRIES ]]; do
@@ -118,10 +119,12 @@ function provisioning_get_nodes() {
                     break
                 fi
                 ATTEMPT=$((ATTEMPT + 1))
+                echo -e "${RED}Retry $ATTEMPT/$MAX_RETRIES for $dir in 5 seconds...${NC}"
                 sleep 5
             done
             if [[ $SUCCESS -eq 0 ]]; then
-                echo -e "${RED}ERROR: Failed to clone node $dir${NC}"
+                echo -e "${RED}CRITICAL ERROR: Failed to clone node $dir after $MAX_RETRIES attempts. Exiting.${NC}"
+                exit 1
             else
                 NODE_OK=1
             fi
@@ -133,7 +136,7 @@ function provisioning_get_nodes() {
 
         requirements="${path}/requirements.txt"
         if [[ -f "$requirements" ]]; then
-            pip install --no-cache-dir -r "$requirements" || echo -e "${RED}ERROR: Failed to install requirements for $dir${NC}"
+            pip install --no-cache-dir -r "$requirements" || { echo -e "${RED}CRITICAL ERROR: Failed to install requirements for $dir. Exiting.${NC}"; exit 1; }
         fi
     done
 }
@@ -150,7 +153,8 @@ function provisioning_get_files() {
         if wget -nc --content-disposition --show-progress -e dotbytes=4M -P "$dir" "$url"; then
             MODELS_SUCCESS=$((MODELS_SUCCESS + 1))
         else
-            echo -e "${RED}ERROR: Failed to download $url${NC}"
+            echo -e "${RED}CRITICAL ERROR: Failed to download $url. Exiting.${NC}"
+            exit 1
         fi
     done
 }
