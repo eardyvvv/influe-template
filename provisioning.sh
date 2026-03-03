@@ -8,6 +8,9 @@ NC='\033[0m'
 WORKSPACE=${WORKSPACE:-/workspace}
 COMFYUI_DIR="${WORKSPACE}/ComfyUI"
 
+NODES_SUCCESS=0
+MODELS_SUCCESS=0
+
 NODES=(
     "https://github.com/kijai/ComfyUI-WanVideoWrapper.git"
     "https://github.com/kijai/ComfyUI-KJNodes.git"
@@ -62,6 +65,16 @@ function provisioning_start() {
     provisioning_get_files "${COMFYUI_DIR}/models/detection"          "${DETECTION_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/loras"              "${LORAS[@]}"
     
+    local NODES_TOTAL=${#NODES[@]}
+    local MODELS_TOTAL=$((${#DIFFUSION_MODELS[@]} + ${#CLIP_MODELS[@]} + ${#CLIP_VISION[@]} + ${#VAE_MODELS[@]} + ${#DETECTION_MODELS[@]} + ${#LORAS[@]}))
+    
+    echo "========================================="
+    echo "          PROVISIONING SUMMARY           "
+    echo "========================================="
+    echo -e " Nodes:  $NODES_SUCCESS out of $NODES_TOTAL successfully loaded."
+    echo -e " Models: $MODELS_SUCCESS out of $MODELS_TOTAL successfully loaded."
+    echo "========================================="
+    
     echo "Provisioning completed."
 }
 
@@ -87,8 +100,14 @@ function provisioning_get_nodes() {
         dir="${dir%.git}"
         path="./${dir}"
 
+        local NODE_OK=0
+
         if [[ -d "$path" ]]; then
-            (cd "$path" && git pull --ff-only 2>/dev/null || { git fetch && git reset --hard origin/main; }) || echo -e "${RED}ERROR: Failed to update node $dir${NC}"
+            if (cd "$path" && git pull --ff-only 2>/dev/null || { git fetch && git reset --hard origin/main; }); then
+                NODE_OK=1
+            else
+                echo -e "${RED}ERROR: Failed to update node $dir${NC}"
+            fi
         else
             local MAX_RETRIES=3
             local ATTEMPT=0
@@ -103,7 +122,13 @@ function provisioning_get_nodes() {
             done
             if [[ $SUCCESS -eq 0 ]]; then
                 echo -e "${RED}ERROR: Failed to clone node $dir${NC}"
+            else
+                NODE_OK=1
             fi
+        fi
+
+        if [[ $NODE_OK -eq 1 ]]; then
+            NODES_SUCCESS=$((NODES_SUCCESS + 1))
         fi
 
         requirements="${path}/requirements.txt"
@@ -122,7 +147,11 @@ function provisioning_get_files() {
     mkdir -p "$dir"
 
     for url in "${files[@]}"; do
-        wget -nc --content-disposition --show-progress -e dotbytes=4M -P "$dir" "$url" || echo -e "${RED}ERROR: Failed to download $url${NC}"
+        if wget -nc --content-disposition --show-progress -e dotbytes=4M -P "$dir" "$url"; then
+            MODELS_SUCCESS=$((MODELS_SUCCESS + 1))
+        else
+            echo -e "${RED}ERROR: Failed to download $url${NC}"
+        fi
     done
 }
 
