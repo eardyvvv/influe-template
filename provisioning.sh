@@ -90,7 +90,20 @@ function provisioning_get_nodes() {
         if [[ -d "$path" ]]; then
             (cd "$path" && git pull --ff-only 2>/dev/null || { git fetch && git reset --hard origin/main; }) || echo -e "${RED}ERROR: Failed to update node $dir${NC}"
         else
-            git clone "$repo" "$path" --recursive || echo -e "${RED}ERROR: Failed to clone node $dir${NC}"
+            local MAX_RETRIES=3
+            local ATTEMPT=0
+            local SUCCESS=0
+            while [[ $ATTEMPT -lt $MAX_RETRIES ]]; do
+                if git clone "$repo" "$path" --recursive; then
+                    SUCCESS=1
+                    break
+                fi
+                ATTEMPT=$((ATTEMPT + 1))
+                sleep 5
+            done
+            if [[ $SUCCESS -eq 0 ]]; then
+                echo -e "${RED}ERROR: Failed to clone node $dir${NC}"
+            fi
         fi
 
         requirements="${path}/requirements.txt"
