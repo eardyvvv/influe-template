@@ -39,22 +39,27 @@ DETECTION_MODELS=(
 )
 
 LORAS=(
-    "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/LoRAs/Wan22_relight/WanAnimate_relight_lora_fp16.safetensors"
     "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Lightx2v/lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank32_bf16.safetensors"
     "https://civitai.com/api/download/models/2066914?type=Model&format=SafeTensor"
 )
 
 function provisioning_start() {
+    echo "Starting provisioning..."
     provisioning_clone_comfyui
     provisioning_install_base_reqs
+    
+    echo "Downloading and installing custom nodes..."
     provisioning_get_nodes
 
+    echo "Downloading models..."
     provisioning_get_files "${COMFYUI_DIR}/models/diffusion_models" "${DIFFUSION_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/clip"               "${CLIP_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/clip_vision"        "${CLIP_VISION[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/vae"                "${VAE_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/detection"          "${DETECTION_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/loras"              "${LORAS[@]}"
+    
+    echo "Provisioning completed."
 }
 
 function provisioning_clone_comfyui() {
@@ -109,5 +114,6 @@ if [[ ! -f /.noprovisioning ]]; then
     provisioning_start
 fi
 
+echo "All set. Starting ComfyUI..."
 cd "${COMFYUI_DIR}"
 python main.py --listen 0.0.0.0 --port 8188
