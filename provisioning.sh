@@ -20,6 +20,7 @@ NODES=(
     "https://github.com/kijai/ComfyUI-WanAnimatePreprocess.git"
     "https://github.com/eardyvvv/comfyui-api-panel.git"
     "https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git"
+    "https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git"
 )
 
 DIFFUSION_MODELS=(
