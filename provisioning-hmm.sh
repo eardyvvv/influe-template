@@ -168,6 +168,10 @@ if [[ ! -f /.noprovisioning ]]; then
     provisioning_start
 fi
 
+echo "Flushing file system cache to free up RAM..."
+sync
+sudo sysctl -w vm.drop_caches=3 2>/dev/null || echo "Note: Cache drop skipped, sync completed."
+
 echo "All set. Starting ComfyUI..."
 cd "${COMFYUI_DIR}"
 python main.py --listen 0.0.0.0 --port 8188
