@@ -149,6 +149,8 @@ function provisioning_get_nodes() {
             pip install --no-cache-dir -r "$requirements" || { echo -e "${RED}CRITICAL ERROR: Failed to install requirements for $dir. Exiting.${NC}"; exit 1; }
         fi
     done
+
+    pip install --no-cache-dir --force-reinstall onnxruntime-gpu
 }
 
 function provisioning_get_files() {
