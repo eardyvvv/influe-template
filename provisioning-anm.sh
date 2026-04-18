@@ -78,9 +78,10 @@ function provisioning_start() {
     provisioning_get_files "${COMFYUI_DIR}/models/vae"                "${VAE_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/detection"          "${DETECTION_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/loras"              "${LORAS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/controlnet"         "${CONTROLNET_MODELS[@]}"
     
     local NODES_TOTAL=${#NODES[@]}
-    local MODELS_TOTAL=$((${#DIFFUSION_MODELS[@]} + ${#CLIP_MODELS[@]} + ${#CLIP_VISION[@]} + ${#VAE_MODELS[@]} + ${#DETECTION_MODELS[@]} + ${#LORAS[@]}))
+    local MODELS_TOTAL=$((${#DIFFUSION_MODELS[@]} + ${#CLIP_MODELS[@]} + ${#CLIP_VISION[@]} + ${#VAE_MODELS[@]} + ${#DETECTION_MODELS[@]} + ${#LORAS[@]} + ${#CONTROLNET_MODELS[@]}))
     
     echo "========================================="
     echo "          PROVISIONING SUMMARY           "
