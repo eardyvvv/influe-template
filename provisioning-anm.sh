@@ -13,52 +13,51 @@ MODELS_SUCCESS=0
 
 NODES=(
     "https://github.com/kijai/ComfyUI-WanVideoWrapper.git"
+    "https://github.com/chflame163/ComfyUI_LayerStyle.git"
+    "https://github.com/yolain/ComfyUI-Easy-Use.git"
     "https://github.com/kijai/ComfyUI-KJNodes.git"
     "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git"
     "https://github.com/kijai/ComfyUI-segment-anything-2.git"
-    "https://github.com/sipherxyz/comfyui-art-venture.git"
+    "https://github.com/cubiq/ComfyUI_essentials.git"
+    "https://github.com/fq393/ComfyUI-ZMG-Nodes.git"
     "https://github.com/kijai/ComfyUI-WanAnimatePreprocess.git"
-    "https://github.com/eardyvvv/comfyui-api-panel.git"
-    "https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git"
-    "https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git"
-    "https://github.com/Fannovel16/comfyui_controlnet_aux.git"
     "https://github.com/rgthree/rgthree-comfy.git"
-    "https://github.com/yolain/ComfyUI-Easy-Use.git"
+    "https://github.com/jnxmx/ComfyUI_HuggingFace_Downloader.git"
+    "https://github.com/teskor-hub/NEW-UTILS.git"
+    "https://github.com/teskor-hub/comfyui-teskors-utils.git"
+    "https://github.com/evanspearman/ComfyMath.git"
+    "https://github.com/PGCRT/CRT-Nodes.git"
 )
 
 DIFFUSION_MODELS=(
-    "https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/Wan22Animate/Wan2_2-Animate-14B_fp8_scaled_e4m3fn_KJ_v2.safetensors"
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_animate_14B_bf16.safetensors"
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_t2v_low_noise_14B_fp16.safetensors"
+    "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/diffusion_models/z_image_turbo_bf16.safetensors"
+    "https://huggingface.co/wdsfdsdf/OFMHUB/resolve/main/WanModel.safetensors"
 )
 
 CLIP_MODELS=(
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp16.safetensors"
-    "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
+    "https://huggingface.co/wdsfdsdf/OFMHUB/resolve/main/text_enc.safetensors"
 )
 
 CLIP_VISION=(
+    "https://huggingface.co/wdsfdsdf/OFMHUB/resolve/main/klip_vision.safetensors"
     "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors"
 )
 
 VAE_MODELS=(
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors"
-    "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors"
+    "https://huggingface.co/wdsfdsdf/OFMHUB/resolve/main/vae.safetensors"
 )
 
 DETECTION_MODELS=(
+    "https://huggingface.co/Wan-AI/Wan2.2-Animate-14B/resolve/main/process_checkpoint/det/yolov10m.onnx"
     "https://huggingface.co/Kijai/vitpose_comfy/resolve/main/onnx/vitpose_h_wholebody_data.bin"
     "https://huggingface.co/Kijai/vitpose_comfy/resolve/main/onnx/vitpose_h_wholebody_model.onnx"
-    "https://huggingface.co/Wan-AI/Wan2.2-Animate-14B/resolve/main/process_checkpoint/det/yolov10m.onnx"
 )
 
 LORAS=(
-    "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Lightx2v/lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank32_bf16.safetensors"
-    "https://civitai.com/api/download/models/2066914?type=Model&format=SafeTensor"
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_i2v_lightx2v_4steps_lora_v1_low_noise.safetensors"
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/8ea53f1aa792b49f1efaf9157b14c7f9cc69d223/split_files/loras/wan2.2_animate_14B_relight_lora_bf16.safetensors"
-    "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/LoRAs/Wan22_relight/WanAnimate_relight_lora_fp16.safetensors"
-    "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Lightx2v/lightx2v_I2V_14B_480p_cfg_step_distill_rank128_bf16.safetensors"
+    "https://huggingface.co/wdsfdsdf/OFMHUB/resolve/main/WanFun.reworked.safetensors"
+    "https://huggingface.co/wdsfdsdf/OFMHUB/resolve/main/light.safetensors"
+    "https://huggingface.co/wdsfdsdf/OFMHUB/resolve/main/WanPusa.safetensors"
+    "https://huggingface.co/wdsfdsdf/OFMHUB/resolve/main/wan.reworked.safetensors"
 )
 
 function provisioning_start() {
