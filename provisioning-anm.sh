@@ -59,6 +59,10 @@ LORAS=(
     "https://huggingface.co/wdsfdsdf/OFMHUB/resolve/main/wan.reworked.safetensors"
 )
 
+CONTROLNET_MODELS=(
+    "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan21_Uni3C_controlnet_fp16.safetensors"
+)
+
 function provisioning_start() {
     echo "Starting provisioning..."
     provisioning_clone_comfyui
