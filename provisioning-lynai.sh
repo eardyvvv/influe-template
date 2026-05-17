@@ -85,6 +85,10 @@ function provisioning_start() {
 function provisioning_clone_comfyui() {
     if [[ ! -d "${COMFYUI_DIR}" ]]; then
         git clone https://github.com/comfyanonymous/ComfyUI.git "${COMFYUI_DIR}"
+    else
+        cd "${COMFYUI_DIR}"
+        git fetch
+        git reset --hard origin/master
     fi
     cd "${COMFYUI_DIR}"
 }
