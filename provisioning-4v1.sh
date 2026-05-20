@@ -13,26 +13,39 @@ MODELS_SUCCESS=0
 
 NODES=(
     "https://github.com/kijai/ComfyUI-WanVideoWrapper.git"
-    "https://github.com/Fannovel16/comfyui_controlnet_aux.git"
-    "https://github.com/rgthree/rgthree-comfy.git"
     "https://github.com/kijai/ComfyUI-KJNodes.git"
-    "https://github.com/yolain/ComfyUI-Easy-Use.git"
     "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git"
     "https://github.com/kijai/ComfyUI-segment-anything-2.git"
-    "https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git"
+    "https://github.com/sipherxyz/comfyui-art-venture.git"
     "https://github.com/kijai/ComfyUI-WanAnimatePreprocess.git"
     "https://github.com/eardyvvv/comfyui-api-panel.git"
+    "https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git"
     "https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git"
-    "https://github.com/sipherxyz/comfyui-art-venture.git"
+    "https://github.com/Fannovel16/comfyui_controlnet_aux.git"
+    "https://github.com/rgthree/rgthree-comfy.git"
+    "https://github.com/yolain/ComfyUI-Easy-Use.git"
+    "https://github.com/ltdrdata/ComfyUI-Impact-Pack.git"
+    "https://github.com/chflame163/ComfyUI_LayerStyle.git"
+    "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes.git"
+    "https://github.com/ClownsharkBatwing/RES4LYF.git"
+    "https://github.com/cubiq/ComfyUI_essentials.git"
+    "https://github.com/1038lab/ComfyUI-QwenVL.git"
+    "https://github.com/ltdrdata/was-node-suite-comfyui.git"
+    "https://github.com/huchukato/ComfyUI-QwenVL-Mod.git"
+    "https://github.com/bollerdominik/ComfyUI-load-lora-from-url.git"
 )
 
 DIFFUSION_MODELS=(
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_animate_14B_bf16.safetensors"
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_t2v_low_noise_14B_fp16.safetensors"
+    "https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/Wan22Animate/Wan2_2-Animate-14B_fp8_scaled_e4m3fn_KJ_v2.safetensors"
+    "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/diffusion_models/z_image_turbo_bf16.safetensors"
 )
 
 CLIP_MODELS=(
     "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
+)
+
+TEXT_ENCODERS=(
+    "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/text_encoders/qwen_3_4b.safetensors"
 )
 
 CLIP_VISION=(
@@ -40,7 +53,8 @@ CLIP_VISION=(
 )
 
 VAE_MODELS=(
-    "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors"
+    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors"
+    "https://civitai.com/api/download/models/2511862?type=Model&format=SafeTensor"
 )
 
 DETECTION_MODELS=(
@@ -50,42 +64,52 @@ DETECTION_MODELS=(
 )
 
 LORAS=(
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_i2v_lightx2v_4steps_lora_v1_low_noise.safetensors"
-    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/8ea53f1aa792b49f1efaf9157b14c7f9cc69d223/split_files/loras/wan2.2_animate_14B_relight_lora_bf16.safetensors"
+    "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Lightx2v/lightx2v_I2V_14B_480p_cfg_step_distill_rank256_bf16.safetensors"
+    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_i2v_lightx2v_4steps_lora_v1_high_noise.safetensors"
+)
+
+MODEL_PATCHES=(
+    "https://huggingface.co/alibaba-pai/Z-Image-Turbo-Fun-Controlnet-Union-2.1/resolve/main/Z-Image-Turbo-Fun-Controlnet-Union-2.1.safetensors"
 )
 
 function provisioning_start() {
     echo "Starting provisioning..."
     provisioning_clone_comfyui
     provisioning_install_base_reqs
-    
+
     echo "Downloading and installing custom nodes..."
     provisioning_get_nodes
 
     echo "Downloading models..."
     provisioning_get_files "${COMFYUI_DIR}/models/diffusion_models" "${DIFFUSION_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/clip"               "${CLIP_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/text_encoders"      "${TEXT_ENCODERS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/clip_vision"        "${CLIP_VISION[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/vae"                "${VAE_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/detection"          "${DETECTION_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/loras"              "${LORAS[@]}"
-    
+    provisioning_get_files "${COMFYUI_DIR}/models/model_patches"      "${MODEL_PATCHES[@]}"
+
     local NODES_TOTAL=${#NODES[@]}
-    local MODELS_TOTAL=$((${#DIFFUSION_MODELS[@]} + ${#CLIP_MODELS[@]} + ${#CLIP_VISION[@]} + ${#VAE_MODELS[@]} + ${#DETECTION_MODELS[@]} + ${#LORAS[@]}))
-    
+    local MODELS_TOTAL=$((${#DIFFUSION_MODELS[@]} + ${#CLIP_MODELS[@]} + ${#TEXT_ENCODERS[@]} + ${#CLIP_VISION[@]} + ${#VAE_MODELS[@]} + ${#DETECTION_MODELS[@]} + ${#LORAS[@]} + ${#MODEL_PATCHES[@]}))
+
     echo "========================================="
     echo "          PROVISIONING SUMMARY           "
     echo "========================================="
     echo -e " Nodes:  $NODES_SUCCESS out of $NODES_TOTAL successfully loaded."
     echo -e " Models: $MODELS_SUCCESS out of $MODELS_TOTAL successfully loaded."
     echo "========================================="
-    
+
     echo "Provisioning completed."
 }
 
 function provisioning_clone_comfyui() {
     if [[ ! -d "${COMFYUI_DIR}" ]]; then
         git clone https://github.com/comfyanonymous/ComfyUI.git "${COMFYUI_DIR}"
+    else
+        cd "${COMFYUI_DIR}"
+        git fetch
+        git reset --hard origin/master
     fi
     cd "${COMFYUI_DIR}"
 }
@@ -144,6 +168,8 @@ function provisioning_get_nodes() {
             pip install --no-cache-dir -r "$requirements" || { echo -e "${RED}CRITICAL ERROR: Failed to install requirements for $dir. Exiting.${NC}"; exit 1; }
         fi
     done
+
+    pip install --no-cache-dir --force-reinstall onnxruntime-gpu
 }
 
 function provisioning_get_files() {
