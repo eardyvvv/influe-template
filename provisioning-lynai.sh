@@ -83,14 +83,25 @@ function provisioning_start() {
 }
 
 function provisioning_clone_comfyui() {
-    if [[ ! -d "${COMFYUI_DIR}" ]]; then
-        git clone https://github.com/comfyanonymous/ComfyUI.git "${COMFYUI_DIR}"
-    else
-        cd "${COMFYUI_DIR}"
-        git fetch
-        git reset --hard origin/master
+    local COMFYUI_REPO="https://github.com/Comfy-Org/ComfyUI.git"
+    local COMFYUI_VERSION="v0.21.1"
+    local COMFYUI_COMMIT="26515acd23fa291a8f5ab53c5997258598de0701"
+
+    if [[ ! -d "${COMFYUI_DIR}/.git" ]]; then
+        git clone --no-checkout "${COMFYUI_REPO}" "${COMFYUI_DIR}"
     fi
+
     cd "${COMFYUI_DIR}"
+    git fetch --force "${COMFYUI_REPO}" "refs/tags/${COMFYUI_VERSION}:refs/tags/${COMFYUI_VERSION}"
+
+    local ACTUAL_COMMIT
+    ACTUAL_COMMIT="$(git rev-list -n 1 "${COMFYUI_VERSION}")"
+    if [[ "${ACTUAL_COMMIT}" != "${COMFYUI_COMMIT}" ]]; then
+        echo -e "${RED}CRITICAL ERROR: Expected ComfyUI ${COMFYUI_VERSION} at ${COMFYUI_COMMIT}, got ${ACTUAL_COMMIT}.${NC}"
+        exit 1
+    fi
+
+    git checkout --detach "${COMFYUI_COMMIT}"
 }
 
 function provisioning_install_base_reqs() {
