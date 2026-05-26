@@ -35,9 +35,9 @@ VAE_MODELS=(
 )
 
 LORAS=(
-    "https://civitai.com/api/download/models/2617751?fileId=2505151"
-    "https://civitai.com/api/download/models/2466153?fileId=2354765"
-    "https://civitai.com/api/download/models/2674760?fileId=2845322"
+    "https://huggingface.co/eardyvvv/influe/resolve/main/loras/Creating_Realistic.safetensors"
+    "https://huggingface.co/eardyvvv/influe/resolve/main/loras/RealisticSnapshot-Zimage-Turbov5.safetensors"
+    "https://huggingface.co/eardyvvv/influe/resolve/main/loras/Z-TURBO_Photography_35mmPhoto_1536.safetensors"
 )
 
 function provisioning_start() {
