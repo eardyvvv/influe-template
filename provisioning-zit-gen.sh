@@ -20,6 +20,7 @@ NODES=(
     "https://github.com/ClownsharkBatwing/RES4LYF.git"
     "https://github.com/cubiq/ComfyUI_essentials.git"
     "https://github.com/ltdrdata/ComfyUI-Impact-Subpack.git"
+    "https://github.com/vrgamegirl19/comfyui-vrgamedevgirl.git"
 )
 
 DIFFUSION_MODELS=(
@@ -32,6 +33,14 @@ TEXT_ENCODERS=(
 
 VAE_MODELS=(
     "https://civitai.com/api/download/models/2511862?type=Model&format=SafeTensor"
+)
+
+SAMS=(
+    "https://huggingface.co/eardyvvv/influe/resolve/main/sams/sam_vit_b_01ec64.pth"
+)
+
+ULTRALYTICS_BBOX=(
+    "https://huggingface.co/eardyvvv/influe/resolve/main/bbox/face_yolov8m.pt"
 )
 
 LORAS=(
@@ -52,10 +61,12 @@ function provisioning_start() {
     provisioning_get_files "${COMFYUI_DIR}/models/diffusion_models" "${DIFFUSION_MODELS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/text_encoders"      "${TEXT_ENCODERS[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/vae"                "${VAE_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/sams"               "${SAMS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/ultralytics/bbox"   "${ULTRALYTICS_BBOX[@]}"
     provisioning_get_files "${COMFYUI_DIR}/models/loras"              "${LORAS[@]}"
 
     local NODES_TOTAL=${#NODES[@]}
-    local MODELS_TOTAL=$((${#DIFFUSION_MODELS[@]} + ${#TEXT_ENCODERS[@]} + ${#VAE_MODELS[@]} + ${#LORAS[@]}))
+    local MODELS_TOTAL=$((${#DIFFUSION_MODELS[@]} + ${#TEXT_ENCODERS[@]} + ${#VAE_MODELS[@]} + ${#SAMS[@]} + ${#ULTRALYTICS_BBOX[@]} + ${#LORAS[@]}))
 
     echo "========================================="
     echo "          PROVISIONING SUMMARY           "
