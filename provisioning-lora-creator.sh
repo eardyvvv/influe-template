@@ -23,7 +23,7 @@ NODES=(
 )
 
 DIFFUSION_MODELS=(
-    "https://huggingface.co/black-forest-labs/FLUX.2-klein-9b-fp8/resolve/main/flux-2-klein-9b-fp8.safetensors"
+    "https://huggingface.co/silveroxides/FLUX.2-dev-fp8_scaled/resolve/main/flux-2-klein-9b-fp8mixed.safetensors"
 )
 
 TEXT_ENCODERS=(
