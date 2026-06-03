@@ -34,6 +34,19 @@ VAE_MODELS=(
     "https://huggingface.co/Comfy-Org/flux2-dev/resolve/main/split_files/vae/flux2-vae.safetensors"
 )
 
+FLORENCE_FILES=(
+    "https://huggingface.co/gokaygokay/Florence-2-SD3-Captioner/resolve/main/config.json"
+    "https://huggingface.co/gokaygokay/Florence-2-SD3-Captioner/resolve/main/configuration_florence2.py"
+    "https://huggingface.co/gokaygokay/Florence-2-SD3-Captioner/resolve/main/modeling_florence2.py"
+    "https://huggingface.co/gokaygokay/Florence-2-SD3-Captioner/resolve/main/processing_florence2.py"
+    "https://huggingface.co/gokaygokay/Florence-2-SD3-Captioner/resolve/main/preprocessor_config.json"
+    "https://huggingface.co/gokaygokay/Florence-2-SD3-Captioner/resolve/main/model.safetensors"
+    "https://huggingface.co/gokaygokay/Florence-2-SD3-Captioner/resolve/main/tokenizer.json"
+    "https://huggingface.co/gokaygokay/Florence-2-SD3-Captioner/resolve/main/tokenizer_config.json"
+    "https://huggingface.co/gokaygokay/Florence-2-SD3-Captioner/resolve/main/vocab.json"
+    "https://huggingface.co/gokaygokay/Florence-2-SD3-Captioner/resolve/main/merges.txt"
+)
+
 function provisioning_start() {
     echo "Starting provisioning..."
     provisioning_clone_comfyui
@@ -48,15 +61,13 @@ function provisioning_start() {
     provisioning_get_files "${COMFYUI_DIR}/models/vae"               "${VAE_MODELS[@]}"
 
     echo "Downloading Florence-2 captioner..."
-    provisioning_get_file_as \
-        "${COMFYUI_DIR}/models/LLM/Florence-2-SD3-Captioner/model.safetensors" \
-        "https://huggingface.co/gokaygokay/Florence-2-SD3-Captioner/resolve/main/model.safetensors"
+    provisioning_get_files "${COMFYUI_DIR}/models/LLM/Florence-2-SD3-Captioner" "${FLORENCE_FILES[@]}"
 
     echo "Installing AI-Toolkit..."
     provisioning_install_aitoolkit
 
     local NODES_TOTAL=${#NODES[@]}
-    local MODELS_TOTAL=$((${#DIFFUSION_MODELS[@]} + ${#TEXT_ENCODERS[@]} + ${#VAE_MODELS[@]} + 1))
+    local MODELS_TOTAL=$((${#DIFFUSION_MODELS[@]} + ${#TEXT_ENCODERS[@]} + ${#VAE_MODELS[@]} + ${#FLORENCE_FILES[@]}))
 
     echo "========================================="
     echo "          PROVISIONING SUMMARY           "
@@ -222,7 +233,6 @@ function provisioning_start_aitoolkit() {
     (
         source "${AITK_DIR}/venv/bin/activate"
         cd "${AITK_DIR}/ui"
-        export AI_TOOLKIT_AUTH="${AITK_AUTH}"
         export NODE_ENV=production
         exec npx next start --port "${AITK_PORT_INTERNAL}"
     ) > "${WORKSPACE}/aitoolkit.log" 2>&1 &
