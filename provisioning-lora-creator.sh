@@ -16,45 +16,22 @@ MODELS_SUCCESS=0
 
 
 NODES=(
-    # "https://github.com/kijai/ComfyUI-WanVideoWrapper.git"
-    # "https://github.com/kijai/ComfyUI-KJNodes.git"
-    # "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite.git"
-    # "https://github.com/kijai/ComfyUI-segment-anything-2.git"
-    # "https://github.com/sipherxyz/comfyui-art-venture.git"
-    # "https://github.com/kijai/ComfyUI-WanAnimatePreprocess.git"
-    # "https://github.com/eardyvvv/comfyui-api-panel.git"
-    # "https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git"
-    # "https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git"
-    # "https://github.com/Fannovel16/comfyui_controlnet_aux.git"
-    # "https://github.com/rgthree/rgthree-comfy.git"
-    # "https://github.com/yolain/ComfyUI-Easy-Use.git"
+    "https://github.com/kijai/ComfyUI-KJNodes.git"
+    "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes.git"
+    "https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git"
+    "https://github.com/kijai/ComfyUI-Florence2.git"
 )
 
 DIFFUSION_MODELS=(
-    # "https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/Wan22Animate/Wan2_2-Animate-14B_fp8_scaled_e4m3fn_KJ_v2.safetensors"
+    "https://huggingface.co/black-forest-labs/FLUX.2-klein-9b-fp8/resolve/main/flux-2-klein-9b-fp8.safetensors"
 )
 
-CLIP_MODELS=(
-    # "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors"
-)
-
-CLIP_VISION=(
-    # "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors"
+TEXT_ENCODERS=(
+    "https://huggingface.co/Comfy-Org/vae-text-encorder-for-flux-klein-9b/resolve/main/split_files/text_encoders/qwen_3_8b_fp8mixed.safetensors"
 )
 
 VAE_MODELS=(
-    # "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors"
-)
-
-DETECTION_MODELS=(
-    # "https://huggingface.co/Kijai/vitpose_comfy/resolve/main/onnx/vitpose_h_wholebody_data.bin"
-    # "https://huggingface.co/Kijai/vitpose_comfy/resolve/main/onnx/vitpose_h_wholebody_model.onnx"
-    # "https://huggingface.co/Wan-AI/Wan2.2-Animate-14B/resolve/main/process_checkpoint/det/yolov10m.onnx"
-)
-
-LORAS=(
-    # "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Lightx2v/lightx2v_I2V_14B_480p_cfg_step_distill_rank128_bf16.safetensors"
-    # "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/LoRAs/Wan22_relight/WanAnimate_relight_lora_fp16.safetensors"
+    "https://huggingface.co/Comfy-Org/flux2-dev/resolve/main/split_files/vae/flux2-vae.safetensors"
 )
 
 function provisioning_start() {
@@ -67,17 +44,19 @@ function provisioning_start() {
 
     echo "Downloading models..."
     provisioning_get_files "${COMFYUI_DIR}/models/diffusion_models" "${DIFFUSION_MODELS[@]}"
-    provisioning_get_files "${COMFYUI_DIR}/models/clip"               "${CLIP_MODELS[@]}"
-    provisioning_get_files "${COMFYUI_DIR}/models/clip_vision"        "${CLIP_VISION[@]}"
-    provisioning_get_files "${COMFYUI_DIR}/models/vae"                "${VAE_MODELS[@]}"
-    provisioning_get_files "${COMFYUI_DIR}/models/detection"          "${DETECTION_MODELS[@]}"
-    provisioning_get_files "${COMFYUI_DIR}/models/loras"              "${LORAS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/text_encoders"     "${TEXT_ENCODERS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/vae"               "${VAE_MODELS[@]}"
+
+    echo "Downloading Florence-2 captioner..."
+    provisioning_get_file_as \
+        "${COMFYUI_DIR}/models/LLM/Florence-2-SD3-Captioner/model.safetensors" \
+        "https://huggingface.co/gokaygokay/Florence-2-SD3-Captioner/resolve/main/model.safetensors"
 
     echo "Installing AI-Toolkit..."
     provisioning_install_aitoolkit
 
     local NODES_TOTAL=${#NODES[@]}
-    local MODELS_TOTAL=$((${#DIFFUSION_MODELS[@]} + ${#CLIP_MODELS[@]} + ${#CLIP_VISION[@]} + ${#VAE_MODELS[@]} + ${#DETECTION_MODELS[@]} + ${#LORAS[@]}))
+    local MODELS_TOTAL=$((${#DIFFUSION_MODELS[@]} + ${#TEXT_ENCODERS[@]} + ${#VAE_MODELS[@]} + 1))
 
     echo "========================================="
     echo "          PROVISIONING SUMMARY           "
@@ -187,6 +166,27 @@ function provisioning_get_files() {
             exit 1
         fi
     done
+}
+
+function provisioning_get_file_as() {
+    local out="$1"
+    local url="$2"
+
+    mkdir -p "$(dirname "$out")"
+
+    if [[ -f "$out" ]]; then
+        echo "Already present: $out"
+        MODELS_SUCCESS=$((MODELS_SUCCESS + 1))
+        return
+    fi
+
+    if wget --show-progress -e dotbytes=4M -O "$out" "$url"; then
+        MODELS_SUCCESS=$((MODELS_SUCCESS + 1))
+    else
+        rm -f "$out"
+        echo -e "${RED}CRITICAL ERROR: Failed to download $url. Exiting.${NC}"
+        exit 1
+    fi
 }
 
 function provisioning_install_aitoolkit() {
