@@ -222,6 +222,13 @@ function provisioning_install_aitoolkit() {
         pip install --no-cache-dir -r requirements.txt
     )
 
+    # Проверка, что окружение реально рабочее. Иначе UI будет МОЛЧА ронять джобы
+    # (он спавнит python со stdio=ignore — ошибки импорта/CUDA не видны нигде).
+    (
+        source "${AITK_DIR}/venv/bin/activate"
+        python -c "import torch, torchao, diffusers, transformers, bitsandbytes, peft; assert torch.cuda.is_available(), 'CUDA NOT available in ai-toolkit venv'; print('AI-Toolkit venv OK | torch', torch.__version__, '| cuda', torch.version.cuda)"
+    ) || { echo -e "${RED}CRITICAL ERROR: AI-Toolkit venv check failed (broken deps or no CUDA).${NC}"; exit 1; }
+
     cd "${AITK_DIR}/ui"
     npm install
     npm run update_db
@@ -229,12 +236,14 @@ function provisioning_install_aitoolkit() {
 }
 
 function provisioning_start_aitoolkit() {
-    echo "Starting AI-Toolkit UI on internal port ${AITK_PORT_INTERNAL}..."
+    echo "Starting AI-Toolkit (worker + UI) on internal port ${AITK_PORT_INTERNAL}..."
     (
         source "${AITK_DIR}/venv/bin/activate"
         cd "${AITK_DIR}/ui"
         export NODE_ENV=production
-        exec npx next start --port "${AITK_PORT_INTERNAL}"
+        export PATH="${AITK_DIR}/ui/node_modules/.bin:${PATH}"
+        node dist/cron/worker.js &
+        exec next start --port "${AITK_PORT_INTERNAL}"
     ) > "${WORKSPACE}/aitoolkit.log" 2>&1 &
 }
 
