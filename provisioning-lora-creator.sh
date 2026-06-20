@@ -157,7 +157,8 @@ function provisioning_get_nodes() {
     done
 
     if [[ ${#NODES[@]} -gt 0 ]]; then
-        pip install --no-cache-dir --force-reinstall onnxruntime-gpu
+        pip uninstall -y onnxruntime onnxruntime-gpu || true
+        pip install --no-cache-dir --force-reinstall "onnxruntime-gpu==1.20.1"
     fi
 }
 

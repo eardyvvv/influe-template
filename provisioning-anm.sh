@@ -21,6 +21,7 @@ NODES=(
     "https://github.com/cubiq/ComfyUI_essentials.git"
     "https://github.com/fq393/ComfyUI-ZMG-Nodes.git"
     "https://github.com/kijai/ComfyUI-WanAnimatePreprocess.git"
+    "https://github.com/Fannovel16/comfyui_controlnet_aux.git"
     "https://github.com/rgthree/rgthree-comfy.git"
     "https://github.com/jnxmx/ComfyUI_HuggingFace_Downloader.git"
     "https://github.com/evanspearman/ComfyMath.git"
@@ -169,7 +170,8 @@ function provisioning_get_nodes() {
         fi
     done
 
-    pip install --no-cache-dir --force-reinstall onnxruntime-gpu
+    pip uninstall -y onnxruntime onnxruntime-gpu || true
+    pip install --no-cache-dir --force-reinstall "onnxruntime-gpu==1.20.1"
 }
 
 function provisioning_get_files() {

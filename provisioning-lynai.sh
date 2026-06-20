@@ -159,7 +159,8 @@ function provisioning_get_nodes() {
         fi
     done
 
-    pip install --no-cache-dir --force-reinstall onnxruntime-gpu
+    pip uninstall -y onnxruntime onnxruntime-gpu || true
+    pip install --no-cache-dir --force-reinstall "onnxruntime-gpu==1.20.1"
 }
 
 function provisioning_get_files() {
