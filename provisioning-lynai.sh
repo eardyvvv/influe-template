@@ -159,8 +159,37 @@ function provisioning_get_nodes() {
         fi
     done
 
-    pip uninstall -y onnxruntime onnxruntime-gpu || true
+        pip uninstall -y onnxruntime onnxruntime-gpu || true
     pip install --no-cache-dir --force-reinstall "onnxruntime-gpu==1.20.1"
+
+    echo "Configuring system linker cache for ONNX Runtime CUDA libraries..."
+
+    python - <<'PY' > /etc/ld.so.conf.d/venv-nvidia-libs.conf
+import site
+import glob
+import os
+
+paths = []
+for root in site.getsitepackages():
+    paths += glob.glob(os.path.join(root, "nvidia", "*", "lib"))
+
+seen = set()
+for p in paths:
+    if os.path.isdir(p) and p not in seen:
+        seen.add(p)
+        print(p)
+PY
+
+    echo "NVIDIA library paths added to linker config:"
+    cat /etc/ld.so.conf.d/venv-nvidia-libs.conf
+
+    ldconfig
+
+    echo "Checking required CUDA/cuDNN libraries in linker cache..."
+    ldconfig -p | grep -E 'libcublasLt.so.12|libcublas.so.12|libcudart.so.12|libcudnn.so.9|libcudnn_ops.so.9|libcudnn_cnn.so.9' || {
+        echo -e "${RED}CRITICAL ERROR: Required CUDA/cuDNN libraries were not found by ldconfig.${NC}"
+        exit 1
+    }
 }
 
 function provisioning_get_files() {
@@ -189,6 +218,6 @@ echo "Flushing file system cache to free up RAM..."
 sync
 sudo sysctl -w vm.drop_caches=3 2>/dev/null || echo "Note: Cache drop skipped, sync completed."
 
-echo "All set. Starting ComfyUI..."
-cd "${COMFYUI_DIR}"
-python main.py --listen 0.0.0.0 --port 8188
+echo "All set. Provisioning completed."
+echo "ComfyUI is started by the Vast.ai supervisor on port 18188."
+echo "Not starting a second ComfyUI process from this provisioning script."
