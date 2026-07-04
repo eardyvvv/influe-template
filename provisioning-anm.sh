@@ -47,9 +47,9 @@ VAE_MODELS=(
 )
 
 DETECTION_MODELS=(
-    "https://huggingface.co/Wan-AI/Wan2.2-Animate-14B/resolve/main/process_checkpoint/det/yolov10m.onnx"
-    "https://huggingface.co/Kijai/vitpose_comfy/resolve/main/onnx/vitpose_h_wholebody_data.bin"
-    "https://huggingface.co/Kijai/vitpose_comfy/resolve/main/onnx/vitpose_h_wholebody_model.onnx"
+    "https://huggingface.co/eardyvvv/vitpose/resolve/main/yolov10m.onnx"
+    "https://huggingface.co/eardyvvv/vitpose/resolve/main/vitpose_h_wholebody_data.bin"
+    "https://huggingface.co/eardyvvv/vitpose/resolve/main/vitpose_h_wholebody_model.onnx"
 )
 
 LORAS=(
