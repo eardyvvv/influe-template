@@ -170,8 +170,14 @@ function provisioning_get_nodes() {
         fi
     done
 
-        pip uninstall -y onnxruntime onnxruntime-gpu || true
-    pip install --no-cache-dir --force-reinstall "onnxruntime-gpu==1.20.1"
+    echo "Installing ONNX Runtime GPU..."
+
+    python -m pip uninstall -y onnxruntime onnxruntime-gpu || true
+
+    python -m pip install \
+        --no-cache-dir \
+        --force-reinstall \
+        "onnxruntime-gpu==1.20.2"
 
     echo "Configuring system linker cache for ONNX Runtime CUDA libraries..."
 
@@ -192,6 +198,27 @@ for p in paths:
 PY
 
     ldconfig
+
+    echo "Verifying ONNX Runtime GPU..."
+
+    python - <<'PY'
+import torch
+import onnxruntime as ort
+
+print("PyTorch:", torch.__version__)
+print("PyTorch CUDA:", torch.version.cuda)
+print("ONNX Runtime:", ort.__version__)
+print("ONNX Runtime file:", ort.__file__)
+print("ONNX providers:", ort.get_available_providers())
+
+if not hasattr(ort, "InferenceSession"):
+    raise RuntimeError("onnxruntime.InferenceSession is missing")
+
+if "CUDAExecutionProvider" not in ort.get_available_providers():
+    raise RuntimeError("CUDAExecutionProvider is not available")
+
+print("ONNX Runtime GPU check passed.")
+PY
 
     echo "Checking required CUDA/cuDNN libraries..."
     ldconfig -p | grep -E 'libcublasLt.so.12|libcublas.so.12|libcudart.so.12|libcudnn.so.9|libcudnn_ops.so.9|libcudnn_cnn.so.9' || {
